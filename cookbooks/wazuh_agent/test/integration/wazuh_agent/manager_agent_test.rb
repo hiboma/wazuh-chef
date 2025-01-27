@@ -1,6 +1,6 @@
 # Check agent is listening to manager
 
-describe command("netstat -vatunp | grep ossec-agentd | awk \'{print $6}\'") do
+describe command("netstat -vatunp | grep wazuh-agentd | awk \'{print $6}\'") do
     its('stdout') { should match ("ESTABLISHED")} 
 end
 
