@@ -5,49 +5,52 @@ on: [push, workflow_dispatch]
 jobs:
   manager-agent:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os: [
+          ubuntu-2004,
+          ubuntu-2204,
+          ubuntu-2404,
+        ]
     steps:
     - name: Check out code
       uses: actions/checkout@v2
-    - uses: actions/setup-ruby@v1
-      name: Setup Ruby
-    - name: Install dependancies
+    - name: Setup Ruby
+      uses: actions/setup-ruby@v1
+    - name: Install dependencies
       run: |
         bundle config set --local without 'vagrant'
         bundle install
+
     - name: Install Chef
       uses: actionshub/chef-install@main
+
     - name: Install manager
       uses: actionshub/test-kitchen@main
       env:
         CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-        PLATFORM: ubuntu
-        RELEASE: '20.04'
       with:
         suite: wazuh-manager
-        os: ubuntu-2004
+        os: ${{ matrix.os }}
         action: converge
+
     - name: Install agent
       uses: actionshub/test-kitchen@main
       env:
         CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-        PLATFORM: ubuntu
-        RELEASE: '20.04'
       with:
         suite: wazuh-agent
-        os: ubuntu-2004
+        os: ${{ matrix.os }}
         action: converge
+
     - name: Test manager and agent connection
       uses: actionshub/test-kitchen@main
       env:
         CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-        PLATFORM: ubuntu
-        RELEASE: '20.04'
-        MANAGER_IP: wazuh-manager
       with:
         suite: wazuh-agent
-        os: ubuntu-2004
+        os: ${{ matrix.os }}
         action: verify
-    
