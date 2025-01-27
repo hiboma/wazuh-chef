@@ -21,33 +21,33 @@ jobs:
       env:
         CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-        PLATFORM: centos
-        RELEASE: '7'
+        PLATFORM: ubuntu
+        RELEASE: '20.04'
       with:
         suite: wazuh-manager
-        os: centos-7
+        os: ubuntu-2004
         action: converge
     - name: Install agent
       uses: actionshub/test-kitchen@main
       env:
         CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-        PLATFORM: centos
-        RELEASE: '7'
+        PLATFORM: ubuntu
+        RELEASE: '20.04'
       with:
         suite: wazuh-agent
-        os: centos-7
+        os: ubuntu-2004
         action: converge
     - name: Test manager and agent connection
       uses: actionshub/test-kitchen@main
       env:
         CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
-        PLATFORM: centos
-        RELEASE: '7'
+        PLATFORM: ubuntu
+        RELEASE: '20.04'
         MANAGER_IP: wazuh-manager
       with:
         suite: wazuh-agent
-        os: centos-7
+        os: ubuntu-2004
         action: verify
     
