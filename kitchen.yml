@@ -13,15 +13,7 @@ verifier:
   name: inspec
 
 platforms:
-  - name: amazonlinux-2
-  - name: debian-9
-  - name: debian-10
-  - name: centos-7
-  - name: centos-8
-  - name: ubuntu-18.04
   - name: ubuntu-20.04
-  - name: opensuse-leap-15
-  - name: fedora-latest
 
 suites:
   - name: odfe-single-node
