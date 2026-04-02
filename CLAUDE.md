@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-A collection of Chef cookbooks for deploying the Wazuh security platform. Version 4.4.0, requires Chef >= 15.0.
+A collection of Chef cookbooks for deploying the Wazuh security platform. Requires Chef >= 15.0. The Wazuh version varies by cookbook: wazuh_manager and wazuh_agent deploy 4.12.0, while elastic-stack, opendistro, filebeat, and filebeat-oss target 4.4.0.
 
 ## Cookbooks
 
@@ -52,12 +52,6 @@ kitchen login wazuh-manager       # SSH/exec into the instance
 ```
 
 Test suites: `wazuh-manager`, `wazuh-agent`, `odfe-single-node` (kitchen.yml only), `elk-single-node` (kitchen.yml only)
-
-### Lint
-
-```bash
-rubocop
-```
 
 ## Architecture
 
