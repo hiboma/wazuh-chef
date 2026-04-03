@@ -48,5 +48,9 @@ default['ossec']['conf']['syscheck'] = {
     'interval' => '5m',
     'max_interval' => '1h',
     'max_eps' => '10'
+  },
+  'file_limit' => {
+    'enabled' => true,
+    'entries' => '100000'
   }
 }

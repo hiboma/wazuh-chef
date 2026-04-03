@@ -54,6 +54,10 @@ when 'ubuntu', 'debian'
         'log_format' => 'syslog',
         'location' => '/var/log/kern.log'
         }
+    },
+    {
+      'log_format' => 'journald',
+      'location' => 'journald'
     }
   ]
 when 'redhat', 'centos', 'amazon', 'fedora', 'oracle'
