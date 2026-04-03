@@ -2,6 +2,9 @@ name: Manager and Agent connection test
 
 on: [push, workflow_dispatch]
 
+env:
+  CHEF_LICENSE: accept-no-persist
+
 jobs:
   manager-agent:
     runs-on: ubuntu-latest
@@ -14,21 +17,19 @@ jobs:
         ]
     steps:
     - name: Check out code
-      uses: actions/checkout@v2
+      uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4.3.1
     - name: Setup Ruby
-      uses: actions/setup-ruby@v1
+      uses: ruby/setup-ruby@3ff19f5e2baf30647122352b96108b1fbe250c64 # v1.299.0
+      with:
+        ruby-version: '3.1'
     - name: Install dependencies
       run: |
         bundle config set --local without 'vagrant'
         bundle install
 
-    - name: Install Chef
-      uses: actionshub/chef-install@main
-
     - name: Install manager
-      uses: actionshub/test-kitchen@main
+      uses: actionshub/test-kitchen@86151766b9985d3765e26a9bf1c990d89015dc40 # main
       env:
-        CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
       with:
         suite: wazuh-manager
@@ -36,9 +37,8 @@ jobs:
         action: converge
 
     - name: Install agent
-      uses: actionshub/test-kitchen@main
+      uses: actionshub/test-kitchen@86151766b9985d3765e26a9bf1c990d89015dc40 # main
       env:
-        CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
       with:
         suite: wazuh-agent
@@ -46,9 +46,8 @@ jobs:
         action: converge
 
     - name: Test manager and agent connection
-      uses: actionshub/test-kitchen@main
+      uses: actionshub/test-kitchen@86151766b9985d3765e26a9bf1c990d89015dc40 # main
       env:
-        CHEF_LICENSE: accept-no-persist
         KITCHEN_LOCAL_YAML: kitchen.dokken.yml
       with:
         suite: wazuh-agent
