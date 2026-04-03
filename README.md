@@ -98,7 +98,7 @@ Since Wazuh 4.0, by default, the agent registers automatically against the manag
 
 ## License and copyright
 
-Wazuh App Copyright (C) 2019 Wazuh Inc. (License GPLv2)
+Wazuh App Copyright (C) 2019 Wazuh Inc. (License Apache 2.0)
 
 ## References
 
