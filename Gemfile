@@ -12,6 +12,7 @@ group :kitchen do
 end	
 
 gem 'berkshelf'
+gem 'chef', '~> 18.0'
 
 group :dokken do
     gem 'kitchen-dokken'
