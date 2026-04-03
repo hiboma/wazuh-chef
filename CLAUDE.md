@@ -4,20 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Overview
 
-A collection of Chef cookbooks for deploying the Wazuh security platform. Requires Chef >= 15.0. The Wazuh version varies by cookbook: wazuh_manager and wazuh_agent deploy 4.12.0, while elastic-stack, opendistro, filebeat, and filebeat-oss target 4.4.0.
+A fork of [wazuh/wazuh-chef](https://github.com/wazuh/wazuh-chef) (archived). Only **wazuh_agent** and **wazuh_manager** cookbooks are maintained for internal use. Requires Chef >= 15.0.
 
 ## Cookbooks
 
-Six cookbooks live under `cookbooks/`:
+Two cookbooks live under `cookbooks/`:
 
 - **wazuh_manager** - Installs and configures the Wazuh Manager (central server)
 - **wazuh_agent** - Installs and configures the Wazuh Agent (client)
-- **elastic-stack** - Elasticsearch + Kibana (commercial)
-- **opendistro** - Open Distro for Elasticsearch + Kibana (OSS)
-- **filebeat** - Filebeat (commercial, ships logs from Manager to Elasticsearch)
-- **filebeat-oss** - Filebeat (OSS variant)
 
-Each cookbook follows the standard Chef structure: `recipes/`, `attributes/`, `templates/`, `test/`. The `wazuh_manager` and `wazuh_agent` cookbooks include `libraries/helpers.rb` which converts Chef attributes to OSSEC XML configuration using Gyoku and Nokogiri.
+Each cookbook follows the standard Chef structure: `recipes/`, `attributes/`, `templates/`, `test/`. Both include `libraries/helpers.rb` which converts Chef attributes to OSSEC XML configuration using Gyoku and Nokogiri.
 
 ## Build & Test Commands
 
@@ -51,17 +47,7 @@ kitchen destroy wazuh-manager     # Tear down the environment
 kitchen login wazuh-manager       # SSH/exec into the instance
 ```
 
-Test suites: `wazuh-manager`, `wazuh-agent`, `odfe-single-node` (kitchen.yml only), `elk-single-node` (kitchen.yml only)
-
-## Architecture
-
-The deployment pipeline flows as:
-
-```
-Agent → Manager → Filebeat → Elasticsearch → Kibana
-```
-
-Pre-configured deployment profiles are defined in `roles/` (`wazuh_server.json`, `wazuh_agent.json`, `elastic_stack.json`, `opendistro.json`, etc.).
+Test suites: `wazuh-manager`, `wazuh-agent`
 
 ## CI
 
