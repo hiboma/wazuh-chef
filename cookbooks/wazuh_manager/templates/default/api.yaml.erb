@@ -25,11 +25,14 @@ access:
   block_time: 300
   max_request_per_minute: 300
 
-# Force the use of authd when adding and removing agents. Values: yes, no
-use_only_authd: no
-
 # Drop privileges (Run as ossec user)
 drop_privileges: yes
+
+# Maximum size of the body in bytes (default: 10 MiB)
+max_upload_size: 10485760
+
+# Maximum time in seconds to wait for a response from the API (default: 10)
+request_timeout: 10
 
 # Enable features under development
 experimental_features: no
