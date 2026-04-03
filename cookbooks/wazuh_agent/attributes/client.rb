@@ -7,3 +7,10 @@ default['ossec']['conf']['client']['notify_time'] = 10
 default['ossec']['conf']['client']['time-reconnect'] = 60
 default['ossec']['conf']['client']['auto_restart'] = true
 default['ossec']['conf']['client']['crypto_method'] = "aes"
+
+# Enrollment configuration (ossec.conf <client> -> <enrollment>)
+# https://documentation.wazuh.com/current/user-manual/reference/ossec-conf/client.html
+default['ossec']['conf']['client']['enrollment']['enabled'] = true
+default['ossec']['conf']['client']['enrollment']['manager_address'] = node['ossec']['address']
+default['ossec']['conf']['client']['enrollment']['port'] = 1515
+default['ossec']['conf']['client']['enrollment']['agent_name'] = node['hostname']
