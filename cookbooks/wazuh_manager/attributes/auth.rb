@@ -9,10 +9,18 @@ default['ossec']['conf']['auth'] = {
     'use_source_ip' => false,
     'purge' => true,
     'use_password' => false,
-    'limit_maxagents' => true,
     'ciphers' => 'HIGH:!ADH:!EXP:!MD5:!RC4:!3DES:!CAMELLIA:@STRENGTH',
     'ssl_verify_host' => false,
     'ssl_manager_cert' => "#{node['ossec']['dir']}/etc/sslmanager.cert",
     'ssl_manager_key' => "#{node['ossec']['dir']}/etc/sslmanager.key",
-    'ssl_auto_negotiate' => false
+    'ssl_auto_negotiate' => false,
+    'force' => {
+        'enabled' => true,
+        'after_registration_time' => '0',
+        'key_mismatch' => true,
+        'disconnected_time' => {
+            '@enabled' => true,
+            'content!' => '1h'
+        }
+    }
 }
