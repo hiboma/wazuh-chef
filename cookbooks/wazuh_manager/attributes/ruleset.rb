@@ -14,8 +14,11 @@ default['ossec']['conf']['ruleset'] = {
     ],
     'rule_exclude' => '0215-policy_rules.xml',
     'list' => [
-        'etc/lists/audit-keys', 
-        'etc/lists/security-eventchannel', 
-        'etc/lists/amazon/aws-eventnames'
+        'etc/lists/audit-keys',
+        'etc/lists/security-eventchannel',
+        'etc/lists/amazon/aws-eventnames',
+        'etc/lists/malicious-ioc/malware-hashes',
+        'etc/lists/malicious-ioc/malicious-ip',
+        'etc/lists/malicious-ioc/malicious-domains'
     ]
 }
