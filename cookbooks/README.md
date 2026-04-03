@@ -53,7 +53,7 @@ default['ossec']['conf']['cluster'] = {
 }
 ``````
 
-This will transform the **disabled** field of from:
+This will transform the **disabled** field from:
 
 ```xml
 <cluster>
@@ -108,8 +108,7 @@ In case you want to customize your installation using roles, you can declare att
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[wazuh_manager::default]",
-    "recipe[filebeat::default]"
+    "recipe[wazuh_manager::default]"
   ],
   "env_run_lists": {
 
@@ -117,9 +116,9 @@ In case you want to customize your installation using roles, you can declare att
 }
 ```
 
-The same example applies for the rest of cookbooks and it's own attributes.
+The same example applies for the rest of cookbooks and their own attributes.
 
-You can get more info about attributes and how the work on the chef documentation: https://docs.chef.io/attributes.html
+You can get more info about attributes and how they work on the Chef documentation: https://docs.chef.io/attributes.html
 
 ### Centralized Configuration
 
@@ -140,7 +139,7 @@ The easiest way to achieve this is to modify the Wazuh Manager attributes in the
     "ossec": {
         "centralized_configuration":{
             "enabled" : "yes",
-            "path": "/var/ossec/etc/shared/default",
+            "path": "/var/ossec/etc/shared/default"
         }
       }
     },
@@ -149,8 +148,7 @@ The easiest way to achieve this is to modify the Wazuh Manager attributes in the
   },
   "chef_type": "role",
   "run_list": [
-    "recipe[wazuh_manager::default]",
-    "recipe[filebeat::default]"
+    "recipe[wazuh_manager::default]"
   ],
   "env_run_lists": {
 
@@ -158,7 +156,7 @@ The easiest way to achieve this is to modify the Wazuh Manager attributes in the
 }
 ```
 
-This, will render all `['ossec']['centralized_configuration']['conf']['agent_config']` variables and convert them to XML using Gyoku
+This will render all `['ossec']['centralized_configuration']['conf']['agent_config']` variables and convert them to XML using Gyoku.
 
 For example, the following attribute:
 
