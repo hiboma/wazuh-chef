@@ -6,5 +6,5 @@
 # Prevents unauthorized uninstallation of the agent on Linux
 # https://documentation.wazuh.com/current/user-manual/reference/ossec-conf/anti-tampering.html
 default['ossec']['conf']['anti_tampering'] = {
-  'enabled' => false
+  'package_uninstallation' => false
 }
