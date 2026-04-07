@@ -8,7 +8,6 @@ port: <%= @port %>
 # Values for API log format: 'plain', 'json', 'plain,json', 'json,plain'
 logs:
   level: "info"
-  path: "logs/api.log"
   format: "plain"
 
 # Cross-origin resource sharing: https://github.com/aio-libs/aiohttp-cors#usage
@@ -27,12 +26,6 @@ access:
 
 # Drop privileges (Run as ossec user)
 drop_privileges: yes
-
-# Maximum size of the body in bytes (default: 10 MiB)
-max_upload_size: 10485760
-
-# Maximum time in seconds to wait for a response from the API (default: 10)
-request_timeout: 10
 
 # Enable features under development
 experimental_features: no
