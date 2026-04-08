@@ -8,7 +8,6 @@ port: <%= @port %>
 # Values for API log format: 'plain', 'json', 'plain,json', 'json,plain'
 logs:
   level: "info"
-  path: "logs/api.log"
   format: "plain"
 
 # Cross-origin resource sharing: https://github.com/aio-libs/aiohttp-cors#usage
@@ -24,9 +23,6 @@ access:
   max_login_attempts: 50
   block_time: 300
   max_request_per_minute: 300
-
-# Force the use of authd when adding and removing agents. Values: yes, no
-use_only_authd: no
 
 # Drop privileges (Run as ossec user)
 drop_privileges: yes
