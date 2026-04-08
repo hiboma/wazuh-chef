@@ -23,6 +23,7 @@ default['ossec']['conf']['wodle'] = [
         'network' => 'yes',
         'packages' => 'yes',
         'ports' => { '@all' => 'no', 'content!' => 'yes'},
-        'processes' => 'yes'
+        'processes' => 'yes',
+        'hotfixes' => 'yes'
      }
 ]
