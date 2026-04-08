@@ -29,6 +29,19 @@ default['ossec']['conf']['syscheck']['directories'] = [
 
 default['ossec']['conf']['syscheck']['nodiff'] = '/etc/ssl/private.key'
 default['ossec']['conf']['syscheck']['skip_nfs'] = true
+default['ossec']['conf']['syscheck']['alert_new_files'] = true
+default['ossec']['conf']['syscheck']['max_eps'] = '100'
+default['ossec']['conf']['syscheck']['process_priority'] = '10'
+default['ossec']['conf']['syscheck']['synchronization'] = {
+  'enabled' => true,
+  'interval' => '5m',
+  'max_interval' => '1h',
+  'max_eps' => '10'
+}
+default['ossec']['conf']['syscheck']['file_limit'] = {
+  'enabled' => true,
+  'entries' => '100000'
+}
 
 =begin
 # Syscheck settings

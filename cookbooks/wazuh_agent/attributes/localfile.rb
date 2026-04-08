@@ -50,6 +50,10 @@ if platform_family?('ubuntu', 'debian')
         'log_format' => 'syslog',
         'location' => '/var/log/kern.log'
         }
+    },
+    {
+      'log_format' => 'journald',
+      'location' => 'journald'
     }
   ]
 elsif platform_family?('rhel','centos', 'amazon')
