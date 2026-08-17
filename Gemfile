@@ -6,10 +6,16 @@ source 'https://rubygems.org'
 #    gem 'mdl'
 #end
 
-group :kitchen do 
+group :kitchen do
     gem 'test-kitchen'
     gem 'kitchen-inspec'
-end	
+    # inspec-core 6.x and later require a Progress Chef license key at runtime
+    # when InSpec detects it is running under Test Kitchen, which makes
+    # `kitchen verify` fail with "Chef Workstation cannot execute without
+    # valid licenses" (exit 174). 5.24.24 is the last release without the
+    # chef-licensing dependency.
+    gem 'inspec-core', '= 5.24.24'
+end
 
 gem 'berkshelf'
 gem 'chef', '~> 18.0'
