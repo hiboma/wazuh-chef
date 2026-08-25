@@ -31,6 +31,7 @@ file "#{node['ossec']['dir']}/etc/ossec.conf" do
 
   content lazy {
     all_conf = node['ossec']['conf'].to_hash
+    Chef::OSSEC::Helpers.client_defaults!(all_conf, node['ossec']['address'], node['hostname'])
     Chef::OSSEC::Helpers.ossec_to_xml('ossec_config' => all_conf)
   }
 

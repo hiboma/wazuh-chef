@@ -43,7 +43,10 @@ else
 end
 
 dir = node['ossec']['dir']
-agent_auth = node['ossec']['agent_auth']
+agent_auth = node['ossec']['agent_auth'].to_hash
+# Resolved here rather than in attributes/authd.rb so that an overridden
+# node['ossec']['address'] is picked up. See attributes/authd.rb.
+agent_auth['host'] ||= node['ossec']['address']
 
 args = "-m #{agent_auth['host']} -p #{agent_auth['port']} -A #{agent_auth['name']}"
 
