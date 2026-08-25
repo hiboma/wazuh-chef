@@ -54,7 +54,7 @@ class Chef
       end
 
       def self.blank?(value)
-        value.nil? || value.to_s.empty?
+        value.nil? || value.to_s.strip.empty?
       end
 
       # The manager address reaches ossec.conf through two places in <client>:
@@ -66,25 +66,53 @@ class Chef
       # of node['ossec']['address']. Values a consumer set explicitly are left
       # untouched, so enrolling against a different host than the agent reports
       # to stays possible.
+      #
+      # client.server may be a single Hash or, for manager failover, an Array of
+      # them. Each entry is filled in individually and the order is preserved,
+      # because the order of <server> blocks defines the failover priority.
       def self.client_defaults!(conf, address, hostname)
         client = conf['client']
         return conf unless client.is_a?(Hash)
 
-        server = client['server']
-        server['address'] = address if server.is_a?(Hash) && blank?(server['address'])
+        servers = client['server'].is_a?(Array) ? client['server'] : [client['server']]
+        servers.each do |server|
+          next unless server.is_a?(Hash)
+
+          server['address'] = address if blank?(server['address'])
+        end
 
         enrollment = client['enrollment']
         if enrollment.is_a?(Hash)
-          enrollment['manager_address'] = address if blank?(enrollment['manager_address'])
+          # An empty <manager_address> is a fatal config error for Wazuh
+          # (XML_VALUENULL), so leave it out rather than emit it blank.
+          enrollment['manager_address'] = address if blank?(enrollment['manager_address']) && !blank?(address)
           enrollment['agent_name'] = hostname if blank?(enrollment['agent_name'])
         end
 
-        if blank?(server.is_a?(Hash) ? server['address'] : nil) ||
-           (enrollment.is_a?(Hash) && blank?(enrollment['manager_address']))
-          raise "node['ossec']['address'] must be set to the Wazuh manager address so the agent can report to and enroll against it"
-        end
+        raise "node['ossec']['address'] must be set to the Wazuh manager address so the agent can report to and enroll against it" unless client_address_configured?(conf, address)
 
         conf
+      end
+
+      # True when the agent has an address to work with: either
+      # node['ossec']['address'] is set, or every <server> block and the
+      # <enrollment> block already carry one explicitly. Used both by the
+      # compile-time guard in wazuh_agent::agent and by client_defaults!, so the
+      # two cannot disagree about what counts as configured.
+      def self.client_address_configured?(conf, address)
+        return true unless blank?(address)
+
+        client = conf['client']
+        return true unless client.is_a?(Hash)
+
+        servers = client['server'].is_a?(Array) ? client['server'] : [client['server']]
+        servers = servers.select { |s| s.is_a?(Hash) }
+        return false if servers.any? { |s| blank?(s['address']) }
+
+        enrollment = client['enrollment']
+        return false if enrollment.is_a?(Hash) && blank?(enrollment['manager_address'])
+
+        true
       end
 
       def self.ossec_to_xml(hash)

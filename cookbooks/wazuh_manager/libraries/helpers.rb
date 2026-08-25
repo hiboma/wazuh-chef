@@ -53,40 +53,6 @@ class Chef
         end
       end
 
-      def self.blank?(value)
-        value.nil? || value.to_s.empty?
-      end
-
-      # The manager address reaches ossec.conf through two places in <client>:
-      # <server><address> and <enrollment><manager_address>. Deriving either one
-      # in an attributes file freezes it before a wrapper cookbook or a role
-      # attribute can take effect, because attribute files of a dependency are
-      # evaluated first and precedence levels do not change evaluation order.
-      # They are therefore resolved here, at converge time, from the final value
-      # of node['ossec']['address']. Values a consumer set explicitly are left
-      # untouched, so enrolling against a different host than the agent reports
-      # to stays possible.
-      def self.client_defaults!(conf, address, hostname)
-        client = conf['client']
-        return conf unless client.is_a?(Hash)
-
-        server = client['server']
-        server['address'] = address if server.is_a?(Hash) && blank?(server['address'])
-
-        enrollment = client['enrollment']
-        if enrollment.is_a?(Hash)
-          enrollment['manager_address'] = address if blank?(enrollment['manager_address'])
-          enrollment['agent_name'] = hostname if blank?(enrollment['agent_name'])
-        end
-
-        if blank?(server.is_a?(Hash) ? server['address'] : nil) ||
-           (enrollment.is_a?(Hash) && blank?(enrollment['manager_address']))
-          raise "node['ossec']['address'] must be set to the Wazuh manager address so the agent can report to and enroll against it"
-        end
-
-        conf
-      end
-
       def self.ossec_to_xml(hash)
         require 'gyoku'
         require 'nokogiri'

@@ -17,6 +17,14 @@
 # limitations under the License.
 #
 
+# Fail before installing anything if there is nothing to point the agent at.
+# ossec.conf is rendered late in the converge, so without this check the run
+# would install the package and then die halfway through. Skipped when every
+# <server> block already carries an explicit address.
+unless Chef::OSSEC::Helpers.client_address_configured?(node['ossec']['conf'], node['ossec']['address'])
+  raise "node['ossec']['address'] must be set to the Wazuh manager address so the agent can report to and enroll against it"
+end
+
 include_recipe 'wazuh_agent::repository'
 
 case node['platform']

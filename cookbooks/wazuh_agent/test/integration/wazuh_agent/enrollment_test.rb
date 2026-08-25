@@ -12,6 +12,10 @@
 
 manager = input('manager_ip')
 
+# Assumes the single-<server> shape used by the wazuh-agent suite. With
+# several <server> blocks configured for failover the address XPath returns
+# a list, and these assertions would need to match against it instead.
+
 describe xml('/var/ossec/etc/ossec.conf') do
     # The agent reports to the manager under test...
     its('ossec_config/client/server/address') { should cmp manager }
