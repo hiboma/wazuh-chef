@@ -18,5 +18,8 @@
 #
 # general settings
 default['ossec']['dir'] = '/var/ossec'
-default['ossec']['address'] = '172.19.0.211'
+# Address of the Wazuh manager. Must be provided by the consumer (role,
+# wrapper cookbook or node attribute). Left nil on purpose: a placeholder
+# IP here silently sends enrollment traffic to an unrelated host.
+default['ossec']['address'] = nil
 default['ossec']['ignore_failure'] = true

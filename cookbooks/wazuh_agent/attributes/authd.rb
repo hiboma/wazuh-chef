@@ -19,7 +19,10 @@
 
 default['ossec']['agent_auth']['register'] = 'no'
 default['ossec']['agent_auth']['name'] = node['hostname']
-default['ossec']['agent_auth']['host'] = node['ossec']['address']
+# Left unset for the same reason as client.server.address: this file runs
+# before a wrapper cookbook or role can override node['ossec']['address'].
+# wazuh_agent::agent falls back to that attribute at converge time.
+default['ossec']['agent_auth']['host'] = nil
 default['ossec']['agent_auth']['port'] = 1515
 default['ossec']['agent_auth']['ca'] = nil
 default['ossec']['agent_auth']['certificate'] = nil

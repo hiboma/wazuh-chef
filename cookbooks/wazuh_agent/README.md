@@ -2,7 +2,9 @@
 
 These cookbooks install and configure a Wazuh Agent on specified nodes.
 
-Currently, the agent is automatically registered using enrollment. check the [documentation](https://documentation.wazuh.com/current/user-manual/registering/) for further information. The manager IP address has to be declared in the `node['ossec']['address']` attribute. 
+Currently, the agent is automatically registered using enrollment. check the [documentation](https://documentation.wazuh.com/current/user-manual/registering/) for further information. The manager address has to be declared in the `node['ossec']['address']` attribute; it has no default and the converge fails if it is left unset.
+
+`node['ossec']['address']` is the single place to set the manager address. Both `<server><address>` and the `<enrollment><manager_address>` used for re-registration are resolved from it, so overriding it from a role, a wrapper cookbook or a node attribute is enough. To enroll against a different host than the one the agent reports to, set `node['ossec']['conf']['client']['enrollment']['manager_address']` explicitly and it is left as-is.
 
 ### Attributes
 
@@ -28,7 +30,7 @@ For example:
     },
     "override_attributes": {
       "ossec": {
-        "address": "172.19.0.211"
+        "address": "wazuh-manager.example.com"
       }
     },
     "chef_type": "role",

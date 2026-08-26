@@ -40,6 +40,8 @@ suites:
       inspec_tests:
         - name: manager and agent connection test
           path: cookbooks/wazuh_agent/test/integration/wazuh_agent/manager_agent_test.rb
+        - name: agent enrollment configuration test
+          path: cookbooks/wazuh_agent/test/integration/wazuh_agent/enrollment_test.rb
       inputs:
         manager_ip: wazuh-manager
         manager_port: 1514

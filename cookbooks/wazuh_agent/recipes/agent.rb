@@ -17,6 +17,14 @@
 # limitations under the License.
 #
 
+# Fail before installing anything if there is nothing to point the agent at.
+# ossec.conf is rendered late in the converge, so without this check the run
+# would install the package and then die halfway through. Skipped when every
+# <server> block already carries an explicit address.
+unless Chef::OSSEC::Helpers.client_address_configured?(node['ossec']['conf'], node['ossec']['address'])
+  raise "node['ossec']['address'] must be set to the Wazuh manager address so the agent can report to and enroll against it"
+end
+
 include_recipe 'wazuh_agent::repository'
 
 case node['platform']
@@ -43,7 +51,10 @@ else
 end
 
 dir = node['ossec']['dir']
-agent_auth = node['ossec']['agent_auth']
+agent_auth = node['ossec']['agent_auth'].to_hash
+# Resolved here rather than in attributes/authd.rb so that an overridden
+# node['ossec']['address'] is picked up. See attributes/authd.rb.
+agent_auth['host'] ||= node['ossec']['address']
 
 args = "-m #{agent_auth['host']} -p #{agent_auth['port']} -A #{agent_auth['name']}"
 
