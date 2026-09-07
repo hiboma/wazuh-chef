@@ -30,25 +30,7 @@ if platform_family?('ubuntu', 'debian')
     {
       'content!' => {
         'log_format' => 'syslog',
-        'location' => '/var/log/auth.log'
-        }
-    },
-    {
-      'content!' => {
-        'log_format' => 'syslog',
-        'location' => '/var/log/syslog'
-        }
-    },
-    {
-      'content!' => {
-        'log_format' => 'syslog',
         'location' => '/var/log/dpkg.log'
-        }
-    },
-    {
-      'content!' => {
-        'log_format' => 'syslog',
-        'location' => '/var/log/kern.log'
         }
     },
     {
