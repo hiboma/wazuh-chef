@@ -25,6 +25,11 @@ unless Chef::OSSEC::Helpers.client_address_configured?(node['ossec']['conf'], no
   raise "node['ossec']['address'] must be set to the Wazuh manager address so the agent can report to and enroll against it"
 end
 
+# Fail before installing anything if no system log source is selected, for
+# the same reason as the address check above. Values a later recipe changes
+# are checked again when ossec.conf is rendered.
+Chef::OSSEC::Helpers.validate_system_logs!(node['ossec']['system_logs'])
+
 include_recipe 'wazuh_agent::repository'
 
 case node['platform']

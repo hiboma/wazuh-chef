@@ -53,6 +53,78 @@ class Chef
         end
       end
 
+      # Checks node['ossec']['system_logs'] and raises when it would leave the
+      # node without any system log source. Used both by the compile-time guard
+      # in the agent and manager recipes and by system_log_localfiles!, so the
+      # two cannot disagree about what counts as configured.
+      #
+      # Only true and false are accepted. A value such as 'yes' or 'false' is
+      # truthy in Ruby and would silently turn a path on.
+      def self.validate_system_logs!(system_logs)
+        system_logs ||= {}
+
+        %w(journald syslog_files).each do |key|
+          value = system_logs[key]
+          next if [true, false].include?(value)
+
+          raise "node['ossec']['system_logs']['#{key}'] must be true or false, got #{value.inspect}"
+        end
+
+        unless system_logs['journald'] || system_logs['syslog_files']
+          raise "Neither node['ossec']['system_logs']['journald'] nor ['syslog_files'] is enabled; system logs would not be collected"
+        end
+
+        if system_logs['syslog_files'] && Array(system_logs['syslog_file_locations']).empty?
+          raise "node['ossec']['system_logs']['syslog_files'] is enabled but ['syslog_file_locations'] is empty"
+        end
+
+        system_logs
+      end
+
+      # Appends the system log sources selected by node['ossec']['system_logs']
+      # to conf['localfile']. This runs at converge time for the same reason as
+      # client_defaults!: building the entries in an attributes file would
+      # freeze the choice before a wrapper cookbook or a role could change it.
+      # See attributes/localfile.rb.
+      #
+      # An entry whose location is already listed in conf['localfile'] is not
+      # added again, so a consumer that kept its own entry for one of these
+      # sources does not end up collecting it twice.
+      def self.system_log_localfiles!(conf, system_logs)
+        validate_system_logs!(system_logs)
+
+        if system_logs['journald'] && system_logs['syslog_files']
+          Chef::Log.warn("Both node['ossec']['system_logs']['journald'] and ['syslog_files'] are enabled. " \
+                         'Where rsyslog is running this ingests kernel, sshd and systemd records twice.')
+        end
+
+        entries = []
+        entries << { 'log_format' => 'journald', 'location' => 'journald' } if system_logs['journald']
+        if system_logs['syslog_files']
+          Array(system_logs['syslog_file_locations']).each do |location|
+            entries << { 'log_format' => 'syslog', 'location' => location }
+          end
+        end
+
+        # A single <localfile> may be given as a Hash. Array() would split it
+        # into key/value pairs, so wrap it instead.
+        localfiles = conf['localfile'].is_a?(Hash) ? [conf['localfile']] : Array(conf['localfile'])
+        known = localfiles.map { |entry| localfile_location(entry) }.compact
+        entries.reject! { |entry| known.include?(entry['location']) }
+
+        conf['localfile'] = localfiles + entries
+        conf
+      end
+
+      # Entries in conf['localfile'] come in two shapes, with or without a
+      # 'content!' wrapper. Both render the same XML.
+      def self.localfile_location(entry)
+        return unless entry.is_a?(Hash)
+
+        body = entry['content!'].is_a?(Hash) ? entry['content!'] : entry
+        body['location']
+      end
+
       def self.ossec_to_xml(hash)
         require 'gyoku'
         require 'nokogiri'
