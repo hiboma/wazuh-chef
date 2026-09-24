@@ -143,6 +143,18 @@ The Debian/Ubuntu default matches upstream Wazuh, which skips the rsyslog files 
 }
 ```
 
+To change `syslog_file_locations`, set it in `override_attributes`. Chef merges arrays set at the same precedence level, so a list in a role's `default_attributes` is added to the cookbook default instead of replacing it, and a path you meant to remove stays collected:
+
+```json
+"override_attributes": {
+  "ossec": {
+    "system_logs": {
+      "syslog_file_locations": ["/var/log/messages", "/var/log/secure"]
+    }
+  }
+}
+```
+
 The RHEL-family default assumes rsyslog as well. Some of those images ship without it, for example Amazon Linux 2023 and minimal RHEL 9 images, in which case `/var/log/messages` and `/var/log/secure` do not exist and `journald: true, syslog_files: false` is the setting to use.
 
 The matching `<localfile>` entries are appended to `ossec.conf` at converge time, so do not list them in `['ossec']['conf']['localfile']` as well. An entry already listed there with the same location is not added a second time.
