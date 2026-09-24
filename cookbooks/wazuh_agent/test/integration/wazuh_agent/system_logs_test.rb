@@ -5,18 +5,21 @@
 # auth and kernel records there.
 
 describe xml('/var/ossec/etc/ossec.conf') do
-    its("ossec_config/localfile[log_format='journald']/location") { should cmp 'journald' }
+    its(["ossec_config/localfile[log_format='journald']/location"]) { should cmp 'journald' }
 end
 
 # The rsyslog files must not be collected alongside journald, or every record
 # would be ingested twice where rsyslog is running.
 %w(/var/log/syslog /var/log/auth.log /var/log/kern.log).each do |location|
     describe xml('/var/ossec/etc/ossec.conf') do
-        its("ossec_config/localfile[location='#{location}']") { should be_empty }
+        its(["ossec_config/localfile[location='#{location}']"]) { should be_empty }
     end
 end
 
 # Entries from node['ossec']['conf']['localfile'] are kept alongside them.
+#
+# The XPaths are passed as arrays because its() splits a plain string on
+# '.', which would cut paths such as /var/log/dpkg.log apart.
 describe xml('/var/ossec/etc/ossec.conf') do
-    its("ossec_config/localfile[location='/var/log/dpkg.log']/log_format") { should cmp 'syslog' }
+    its(["ossec_config/localfile[location='/var/log/dpkg.log']/log_format"]) { should cmp 'syslog' }
 end
