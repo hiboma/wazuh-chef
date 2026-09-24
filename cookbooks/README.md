@@ -120,6 +120,33 @@ The same example applies for the rest of cookbooks and their own attributes.
 
 You can get more info about attributes and how they work on the Chef documentation: https://docs.chef.io/attributes.html
 
+### System log collection
+
+System logs reach Wazuh either from journald or from the files rsyslog writes from it. Both carry the same records, so collecting both ingests every kernel, sshd and systemd event twice on a host where rsyslog is running. Collecting only the files leaves a silent gap on a host without rsyslog, because Wazuh does not report a missing `localfile` path. The cookbooks cannot tell which applies, so the choice is made with these attributes, in both `wazuh_agent` and `wazuh_manager`:
+
+| Attribute | Debian/Ubuntu | RHEL family |
+|---|---|---|
+| `['ossec']['system_logs']['journald']` | `true` | `false` |
+| `['ossec']['system_logs']['syslog_files']` | `false` | `true` |
+| `['ossec']['system_logs']['syslog_file_locations']` | `/var/log/syslog`, `/var/log/auth.log`, `/var/log/kern.log` | `/var/log/messages`, `/var/log/secure`, `/var/log/maillog` (manager: `messages`, `secure`) |
+
+The Debian/Ubuntu default matches upstream Wazuh, which skips the rsyslog files on a host that has `journalctl`. On a host where rsyslog is running and you prefer the files, switch the paths in a role or a wrapper cookbook:
+
+```json
+"default_attributes": {
+  "ossec": {
+    "system_logs": {
+      "journald": false,
+      "syslog_files": true
+    }
+  }
+}
+```
+
+The matching `<localfile>` entries are appended to `ossec.conf` at converge time, so do not list them in `['ossec']['conf']['localfile']` as well. An entry already listed there with the same location is not added a second time.
+
+The converge fails when both paths are disabled, or when either flag is anything other than `true` or `false`. Enabling both is allowed and logs a warning.
+
 ### Centralized Configuration
 
 You can set up your Wazuh [Centralized Configuration](https://documentation.wazuh.com/current/user-manual/reference/centralized-configuration.html#centralized-configuration-process) with Chef.
