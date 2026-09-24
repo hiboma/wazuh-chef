@@ -74,8 +74,15 @@ class Chef
           raise "Neither node['ossec']['system_logs']['journald'] nor ['syslog_files'] is enabled; system logs would not be collected"
         end
 
-        if system_logs['syslog_files'] && Array(system_logs['syslog_file_locations']).empty?
-          raise "node['ossec']['system_logs']['syslog_files'] is enabled but ['syslog_file_locations'] is empty"
+        if system_logs['syslog_files']
+          locations = Array(system_logs['syslog_file_locations'])
+          raise "node['ossec']['system_logs']['syslog_files'] is enabled but ['syslog_file_locations'] is empty" if locations.empty?
+
+          locations.each do |location|
+            next if location.is_a?(String) && !location.strip.empty?
+
+            raise "node['ossec']['system_logs']['syslog_file_locations'] must contain non-empty paths, got #{location.inspect}"
+          end
         end
 
         system_logs
@@ -110,7 +117,24 @@ class Chef
         # into key/value pairs, so wrap it instead.
         localfiles = conf['localfile'].is_a?(Hash) ? [conf['localfile']] : Array(conf['localfile'])
         known = localfiles.map { |entry| localfile_location(entry) }.compact
-        entries.reject! { |entry| known.include?(entry['location']) }
+
+        # A consumer that overrode ['ossec']['conf']['localfile'] before these
+        # attributes existed may still list a source there that is now turned
+        # off, which would keep it collected next to the selected one.
+        disabled = []
+        disabled << 'journald' unless system_logs['journald']
+        disabled.concat(Array(system_logs['syslog_file_locations'])) unless system_logs['syslog_files']
+        (known & disabled).each do |location|
+          Chef::Log.warn("#{location} is listed in node['ossec']['conf']['localfile'] although node['ossec']['system_logs'] " \
+                         'turns it off. It is still collected; remove it there or enable it in system_logs.')
+        end
+
+        entries.reject! do |entry|
+          next false unless known.include?(entry['location'])
+
+          Chef::Log.info("#{entry['location']} is already listed in node['ossec']['conf']['localfile']; not adding it again")
+          true
+        end
 
         conf['localfile'] = localfiles + entries
         conf
