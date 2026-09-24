@@ -143,9 +143,13 @@ The Debian/Ubuntu default matches upstream Wazuh, which skips the rsyslog files 
 }
 ```
 
+The RHEL-family default assumes rsyslog as well. Some of those images ship without it, for example Amazon Linux 2023 and minimal RHEL 9 images, in which case `/var/log/messages` and `/var/log/secure` do not exist and `journald: true, syslog_files: false` is the setting to use.
+
 The matching `<localfile>` entries are appended to `ossec.conf` at converge time, so do not list them in `['ossec']['conf']['localfile']` as well. An entry already listed there with the same location is not added a second time.
 
-The converge fails when both paths are disabled, or when either flag is anything other than `true` or `false`. Enabling both is allowed and logs a warning.
+If you override `['ossec']['conf']['localfile']` and that list contains `journald` or the rsyslog files, move the choice to `system_logs` and remove those entries from your list. Otherwise a source you left in the list stays collected next to the one `system_logs` selects. The converge logs a warning when a location listed there is turned off in `system_logs`.
+
+The converge fails when both paths are disabled, when either flag is anything other than `true` or `false`, or when `syslog_files` is enabled and `syslog_file_locations` is empty or contains a blank entry. Enabling both is allowed and logs a warning.
 
 ### Centralized Configuration
 
