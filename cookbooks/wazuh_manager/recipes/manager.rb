@@ -2,6 +2,12 @@
 # Recipe:: manager
 # Author:: Wazuh <info@wazuh.com>
 
+# Fail before installing anything if no system log source is selected.
+# ossec.conf is rendered late in the converge, so without this check the run
+# would install the package and then die halfway through. Values a later
+# recipe changes are checked again when ossec.conf is rendered.
+Chef::OSSEC::Helpers.validate_system_logs!(node['ossec']['system_logs'])
+
 case node['platform']
 when 'ubuntu', 'debian'
   apt_package 'wazuh-manager' do

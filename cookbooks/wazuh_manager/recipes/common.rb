@@ -29,6 +29,7 @@ file "#{node['ossec']['dir']}/etc/ossec.conf" do
 
   content lazy {
     all_conf = node['ossec']['conf'].to_hash
+    Chef::OSSEC::Helpers.system_log_localfiles!(all_conf, node['ossec']['system_logs'])
     Chef::OSSEC::Helpers.ossec_to_xml('ossec_config' => all_conf)
   }
   

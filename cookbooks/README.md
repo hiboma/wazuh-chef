@@ -120,6 +120,49 @@ The same example applies for the rest of cookbooks and their own attributes.
 
 You can get more info about attributes and how they work on the Chef documentation: https://docs.chef.io/attributes.html
 
+### System log collection
+
+System logs reach Wazuh either from journald or from the files rsyslog writes from it. Both carry the same records, so collecting both ingests every kernel, sshd and systemd event twice on a host where rsyslog is running. Collecting only the files leaves a silent gap on a host without rsyslog, because Wazuh does not report a missing `localfile` path. The cookbooks cannot tell which applies, so the choice is made with these attributes, in both `wazuh_agent` and `wazuh_manager`:
+
+| Attribute | Debian/Ubuntu | RHEL family |
+|---|---|---|
+| `['ossec']['system_logs']['journald']` | `true` | `false` |
+| `['ossec']['system_logs']['syslog_files']` | `false` | `true` |
+| `['ossec']['system_logs']['syslog_file_locations']` | `/var/log/syslog`, `/var/log/auth.log`, `/var/log/kern.log` | `/var/log/messages`, `/var/log/secure`, `/var/log/maillog` (manager: `messages`, `secure`) |
+
+The Debian/Ubuntu default matches upstream Wazuh, which skips the rsyslog files on a host that has `journalctl`. On a host where rsyslog is running and you prefer the files, switch the paths in a role or a wrapper cookbook:
+
+```json
+"default_attributes": {
+  "ossec": {
+    "system_logs": {
+      "journald": false,
+      "syslog_files": true
+    }
+  }
+}
+```
+
+To change `syslog_file_locations`, set it in `override_attributes`. Chef merges arrays set at the same precedence level, so a list in a role's `default_attributes` is added to the cookbook default instead of replacing it, and a path you meant to remove stays collected:
+
+```json
+"override_attributes": {
+  "ossec": {
+    "system_logs": {
+      "syslog_file_locations": ["/var/log/messages", "/var/log/secure"]
+    }
+  }
+}
+```
+
+The RHEL-family default assumes rsyslog as well. Some of those images ship without it, for example Amazon Linux 2023 and minimal RHEL 9 images, in which case `/var/log/messages` and `/var/log/secure` do not exist and `journald: true, syslog_files: false` is the setting to use.
+
+The matching `<localfile>` entries are appended to `ossec.conf` at converge time, so do not list them in `['ossec']['conf']['localfile']` as well. An entry already listed there with the same location is not added a second time.
+
+If you override `['ossec']['conf']['localfile']` and that list contains `journald` or the rsyslog files, move the choice to `system_logs` and remove those entries from your list. Otherwise a source you left in the list stays collected next to the one `system_logs` selects. The converge logs a warning when a location listed there is turned off in `system_logs`.
+
+The converge fails when both paths are disabled, when either flag is anything other than `true` or `false`, or when `syslog_files` is enabled and `syslog_file_locations` is empty or contains a blank entry. Enabling both is allowed and logs a warning.
+
 ### Centralized Configuration
 
 You can set up your Wazuh [Centralized Configuration](https://documentation.wazuh.com/current/user-manual/reference/centralized-configuration.html#centralized-configuration-process) with Chef.

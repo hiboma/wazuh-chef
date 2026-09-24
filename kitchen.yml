@@ -42,6 +42,8 @@ suites:
           path: cookbooks/wazuh_agent/test/integration/wazuh_agent/manager_agent_test.rb
         - name: agent enrollment configuration test
           path: cookbooks/wazuh_agent/test/integration/wazuh_agent/enrollment_test.rb
+        - name: agent system log collection test
+          path: cookbooks/wazuh_agent/test/integration/wazuh_agent/system_logs_test.rb
       inputs:
         manager_ip: wazuh-manager
         manager_port: 1514
