@@ -15,6 +15,14 @@ Two cookbooks live under `cookbooks/`:
 
 Each cookbook follows the standard Chef structure: `recipes/`, `attributes/`, `templates/`, `test/`. Both include `libraries/helpers.rb` which converts Chef attributes to OSSEC XML configuration using Gyoku and Nokogiri.
 
+## Upstream reference
+
+wazuh/wazuh-chef is archived. The official [wazuh-puppet](https://github.com/wazuh/wazuh-puppet) module is the reference for changes to port: it tracks every Wazuh release and the official documentation describes it.
+
+- `.claude/skills/compare-wazuh-puppet/` lists the wazuh-puppet changes and feature gaps worth porting
+- `.claude/skills/bump-wazuh-version/` updates the Wazuh version in both cookbooks
+- `.claude/rules/` holds the conventions for recipes, attributes and integration tests
+
 ## Build & Test Commands
 
 ### Install dependencies
