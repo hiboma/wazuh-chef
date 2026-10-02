@@ -63,6 +63,7 @@ template "#{node['ossec']['dir']}/etc/local_internal_options.conf" do
   owner 'root'
   group 'wazuh'
   mode '0640'
+  notifies :restart, 'service[wazuh]'
 end
 
 template "#{node['ossec']['dir']}/etc/rules/local_rules.xml" do
@@ -70,6 +71,7 @@ template "#{node['ossec']['dir']}/etc/rules/local_rules.xml" do
   owner 'root'
   group 'wazuh'
   mode '0640'
+  notifies :restart, 'service[wazuh]'
 end
 
 
@@ -78,6 +80,7 @@ template "#{node['ossec']['dir']}/etc/decoders/local_decoder.xml" do
   owner 'root'
   group 'wazuh'
   mode '0640'
+  notifies :restart, 'service[wazuh]'
 end
 
 
@@ -90,11 +93,14 @@ template "#{node['ossec']['dir']}/api/configuration/api.yaml" do
     host: "#{node['api']['ip']}",
     port: "#{node['api']['port']}"
   )
+  notifies :restart, 'service[wazuh]'
 end
 
 
+# Restarted only through the notifications above, so an unchanged converge
+# does not make every agent reconnect.
 service 'wazuh' do
   service_name 'wazuh-manager'
   supports :status => true, :restart => true, :reload => true
-  action [:enable, :restart]
+  action [:enable, :start]
 end

@@ -117,6 +117,7 @@ execute 'wazuh agent auth' do
   ignore_failure node['ossec']['ignore_failure']
   only_if { agent_auth['register'] == 'yes' && agent_auth['host'] && !File.size?("#{dir}/etc/client.keys") }
   sensitive true
+  notifies :restart, 'service[wazuh]'
 end
 
 include_recipe 'wazuh_agent::common'
@@ -126,10 +127,13 @@ template "#{node['ossec']['dir']}/etc/local_internal_options.conf" do
   owner 'root'
   group 'wazuh'
   only_if { !::File.exist?("#{node['ossec']['dir']}/etc/local_internal_options.conf") }
+  notifies :restart, 'service[wazuh]'
 end
 
+# Restarted only through the notifications above, so an unchanged converge
+# leaves the agent connected.
 service 'wazuh' do
   service_name 'wazuh-agent'
   supports status: true, restart: true
-  action [:enable, :restart]
+  action [:enable, :start]
 end
