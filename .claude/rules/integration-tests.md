@@ -21,5 +21,10 @@ paths:
   `.`, so `its("ossec_config/localfile[location='/var/log/auth.log']")` breaks.
   Write `its(["ossec_config/localfile[location='/var/log/auth.log']"])`.
 - **Add a regression test with each fix** under
-  `cookbooks/<cookbook>/test/integration/<cookbook>/`. The CI runs the
-  manager-agent connection test on ubuntu-20.04, 22.04 and 24.04 only.
+  `cookbooks/<cookbook>/test/integration/<cookbook>/`.
+- **The CI runs only the tests listed in `inspec_tests`.** It converges the
+  manager and the agent, then runs `verify` on the wazuh-agent suite, on
+  ubuntu-20.04, 22.04 and 24.04. That runs only the files listed under
+  `inspec_tests` in `kitchen.yml` and `kitchen.dokken.yml`. The manager's
+  InSpec tests do not run in CI. Add a new test file to `inspec_tests` in
+  both files to run it in CI.

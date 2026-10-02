@@ -5,6 +5,9 @@ paths:
 
 # Recipe conventions
 
+Some existing code does not follow these conventions yet. Apply them to new
+code and to the lines you change; fix other places in a separate change.
+
 - **Services restart only through notifications.** A resource that changes a
   file the daemon reads must `notifies :restart, 'service[wazuh]'`. The
   service resource itself uses `[:enable, :start]`. A restart on every

@@ -25,12 +25,13 @@ target version is released" or "feature gap".
 git clone https://github.com/wazuh/wazuh-puppet.git "$TMPDIR/wazuh-puppet"
 cd "$TMPDIR/wazuh-puppet"
 git tag | sort -V | tail
-git branch -r | grep -E '[0-9]+\.[0-9]+'
+git branch -r | grep -E 'origin/[0-9]+\.[0-9]+\.[0-9]+$'
 cat VERSION.json
 ```
 
-- Release tags are `vX.Y.Z`. Upcoming patch releases live on branches named
-  `X.Y.Z`. `main` carries the next major version and may be an alpha.
+- Release tags are `vX.Y.Z`. Tags with `-rc` are release candidates; do not
+  compare against them. Upcoming releases live on branches named `X.Y.Z`.
+  `main` carries the next major version and may be an alpha.
 - Ignore stale branches such as `5.0-dev`, which was last updated in 2021. Check
   `git log -1 --format=%cd <ref>` before treating a branch as current.
 
@@ -52,7 +53,7 @@ This fork maintains only the manager and the agent.
 | `manifests/manager.pp`, `manifests/agent.pp` | `cookbooks/*/recipes/manager.rb`, `cookbooks/*/recipes/agent.rb`, `recipes/common.rb` |
 | `manifests/repo.pp` | `cookbooks/*/recipes/repository.rb` |
 | `templates/wazuh_manager.conf.erb`, `templates/wazuh_agent.conf.erb`, `templates/fragments/*.erb` | attributes rendered by `libraries/helpers.rb` (Gyoku) |
-| `templates/api/*`, `local_rules`, `local_decoder` templates | `cookbooks/wazuh_manager/templates/default/` |
+| `templates/wazuh_api_yml.erb`, `templates/local_rules.xml.erb`, `templates/local_decoder.xml.erb` | `cookbooks/wazuh_manager/templates/default/` |
 | `kitchen/` specs | `cookbooks/*/test/integration/` (InSpec) |
 
 ## 3. Classify each change

@@ -26,7 +26,11 @@ paths:
   file `<localfile>` entries come from `node['ossec']['system_logs']` through
   `Helpers.system_log_localfiles!`. They do not appear in
   `node['ossec']['conf']['localfile']`.
-- **`libraries/helpers.rb` is the same file in both cookbooks.** Keep the two
-  copies identical.
+- **`libraries/helpers.rb` exists in both cookbooks.** Both define
+  `Chef::OSSEC::Helpers`. Keep the shared methods (`object_to_ossec`,
+  `ossec_to_xml`, `validate_system_logs!`, `system_log_localfiles!`,
+  `localfile_location`) identical in both copies. The client methods
+  (`blank?`, `client_defaults!`, `client_address_configured?`) exist only in
+  the agent cookbook; do not copy them to the manager.
 - **Version attributes live in two files.** `wazuh_manager/attributes/versions.rb`
   and `wazuh_agent/attributes/version.rb` must hold the same version.

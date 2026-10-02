@@ -48,6 +48,8 @@ Policyfile.lock.json
 # vagrant stuff
 .vagrant/
 .vagrant.d/
-# Claude Code project skills and rules (settings.local.json stays ignored)
+
+# Claude Code: share the project rules and skills, keep local settings private
+.claude/*
 !.claude/rules/
 !.claude/skills/

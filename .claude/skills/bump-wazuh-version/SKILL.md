@@ -52,8 +52,15 @@ ossec.conf sections. The `compare-wazuh-puppet` skill covers that review.
 
 ## 4. Test
 
-Run the manager-agent connection test the CI runs (see CLAUDE.md), or push and
-let GitHub Actions run it on ubuntu-20.04, 22.04 and 24.04.
+Run the manager-agent connection test the way the CI runs it, or push and let
+GitHub Actions run it on ubuntu-20.04, 22.04 and 24.04.
+
+```bash
+export KITCHEN_LOCAL_YAML=kitchen.dokken.yml CHEF_LICENSE=accept-no-persist
+kitchen converge wazuh-manager-ubuntu-2404
+kitchen converge wazuh-agent-ubuntu-2404
+kitchen verify wazuh-agent-ubuntu-2404
+```
 
 ## 5. Commit
 
