@@ -15,7 +15,7 @@ when 'debian', 'ubuntu'
     
     apt_package %w(curl apt-transport-https lsb-release gnupg2)
 when 'redhat', 'centos', 'amazon', 'fedora', 'oracle'   
-    if node['platform_version'] >= '8'
+    if node['platform_version'].to_i >= 8
         dnf_package 'curl'
     else
         yum_package 'curl' 
