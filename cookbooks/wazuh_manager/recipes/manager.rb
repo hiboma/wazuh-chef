@@ -53,6 +53,7 @@ if node['ossec']['conf']['cluster']['node_type'] == 'master'
   execute 'Enable Authd' do
     command '/var/ossec/bin/wazuh-control enable auth'
     not_if "ps axu | grep wazuh-authd | grep -v grep"
+    notifies :restart, 'service[wazuh]'
   end
 end
 
