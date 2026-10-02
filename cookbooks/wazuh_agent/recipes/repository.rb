@@ -33,7 +33,7 @@ if platform_family?('ubuntu', 'debian')
   end
 
   apt_update
-elsif platform_family?('rhel', 'redhat', 'centos', 'amazon')
+elsif platform_family?('rhel', 'amazon', 'fedora')
   yum_repository 'wazuh' do
     description 'WAZUH Yum Repository - www.wazuh.com'
     gpgcheck true
@@ -42,9 +42,9 @@ elsif platform_family?('rhel', 'redhat', 'centos', 'amazon')
     baseurl "https://packages.wazuh.com/#{node['wazuh']['major_version']}/yum/"
     action :create
   end
-elsif
-   zypper_repository 'wazuh' do
-    description 'WAZUH Yum Repository - www.wazuh.com'
+elsif platform_family?('suse')
+  zypper_repository 'wazuh' do
+    description 'WAZUH Zypper Repository - www.wazuh.com'
     gpgcheck true
     gpgkey 'https://packages.wazuh.com/key/GPG-KEY-WAZUH'
     enabled true 
