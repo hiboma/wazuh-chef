@@ -14,7 +14,7 @@ when 'ubuntu', 'debian'
     version "#{node['wazuh']['patch_version']}-1"
   end
 when 'redhat', 'centos', 'amazon', 'fedora', 'oracle'
-  if node['platform_version'] >= '8'
+  if node['platform_version'].to_i >= 8
     dnf_package 'wazuh-manager' do
       version "#{node['wazuh']['patch_version']}-1"
     end
